@@ -1,8 +1,5 @@
-<p
-
->
-
-
-    <p>"asdf"</p>
-
-</p>
+<doc width="215.9mm" height="279.4mm">
+    <p width="100%" align="center">
+        {case_number}
+    </p>
+</doc>

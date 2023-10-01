@@ -1,6 +1,8 @@
 use retoken::Span;
 
-use super::{error::Error, markup_close::MarkupClose, markup_open::MarkupOpen, parse::Parse, Skip};
+use super::{
+    error::LexicalError, markup_close::MarkupClose, markup_open::MarkupOpen, parse::Parse, Skip,
+};
 
 #[derive(Debug, Clone)]
 pub enum MarkupType<'a> {
@@ -15,7 +17,7 @@ pub struct MarkupTag<'a> {
 }
 
 impl<'a> Parse<'a> for MarkupTag<'a> {
-    fn parse(tokenizer: &'a retoken::Tokenizer) -> Result<Self, Error> {
+    fn parse(tokenizer: &'a retoken::Tokenizer) -> Result<Self, LexicalError> {
         let start = tokenizer.cursor();
 
         use retoken::lazy_regex;
@@ -34,7 +36,7 @@ impl<'a> Parse<'a> for MarkupTag<'a> {
         Ok(Self { markup_type, span })
     }
 
-    fn error(error: retoken::Error<super::Alphabet>) -> Error {
-        Error::Token(error)
+    fn error(error: retoken::Error<super::Alphabet>) -> LexicalError {
+        LexicalError::Token(error)
     }
 }

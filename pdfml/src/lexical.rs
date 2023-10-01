@@ -1,23 +1,19 @@
 use retoken::{relex, Span};
 
-pub mod arg;
-pub mod arguments;
+use self::parse::Parse;
+
 pub mod attr;
 pub mod attributes;
 pub mod bracketed_expr;
-pub mod call_expr;
 pub mod closing;
 pub mod error;
 pub mod expr;
-pub mod literal;
-pub mod markup;
 pub mod markup_close;
 pub mod markup_open;
 pub mod markup_tag;
 pub mod parse;
 pub mod tag;
 pub mod tags;
-pub mod unquoted_literal;
 
 relex! {
     pub alphabet Alphabet
@@ -97,5 +93,17 @@ impl<'a> retoken::Token<'a, Alphabet> for Quoted<'a> {
         tokenizer.advance(len);
 
         Ok(Self { content, span })
+    }
+}
+
+impl<'a> Parse<'a> for Quoted<'a> {
+    fn error(error: retoken::Error<Alphabet>) -> error::LexicalError {
+        error::LexicalError::Token(error)
+    }
+
+    fn parse(tokenizer: &'a retoken::Tokenizer) -> Result<Self, error::LexicalError> {
+        let quoted: Self = tokenizer.token().map_err(Self::error)?;
+
+        Ok(quoted)
     }
 }

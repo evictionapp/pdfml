@@ -1,18 +1,26 @@
+use std::collections::HashMap;
+
 use retoken::Tokenizer;
 
-use crate::lexical::{error::err_ariadne, parse::Parse, tags::Tags};
+use crate::{
+    lexical::{parse::Parse, tags::Tags},
+    render::error::RenderError,
+    resolved::resolved_tree::ResolvedTree,
+    syntax::syntax_tree::SyntaxTree,
+};
 
-pub fn render(src: &str) {
-    let tokenzier = Tokenizer::new(src);
+pub mod error;
 
-    let tags = Tags::parse(&tokenzier);
+pub fn render(src: &str, ident_map: HashMap<Box<str>, Box<str>>) -> Result<(), RenderError> {
+    let tokenizer = Tokenizer::new(src);
 
-    match tags {
-        Ok(ok) => {
-            println!("{:?}", ok);
-        }
-        Err(err) => {
-            let _ = err_ariadne(&err, "foo.pdfml", src);
-        }
-    }
+    let tags = Tags::parse(&tokenizer)?;
+
+    let tree = SyntaxTree::new(tags)?;
+
+    let resolved = ResolvedTree::new(tree, ident_map)?;
+
+    println!("{:?}", resolved);
+
+    Ok(())
 }

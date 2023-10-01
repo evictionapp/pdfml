@@ -2,7 +2,7 @@ use std::collections::VecDeque;
 
 use retoken::Span;
 
-use super::{error::Error, parse::Parse, tag::Tag, Skip};
+use super::{error::LexicalError, parse::Parse, tag::Tag, Skip};
 
 #[derive(Debug, Clone)]
 pub struct Tags<'a> {
@@ -11,7 +11,7 @@ pub struct Tags<'a> {
 }
 
 impl<'a> Parse<'a> for Tags<'a> {
-    fn parse(tokenizer: &'a retoken::Tokenizer) -> Result<Self, super::error::Error> {
+    fn parse(tokenizer: &'a retoken::Tokenizer) -> Result<Self, super::error::LexicalError> {
         let start = tokenizer.cursor();
         let mut list = VecDeque::new();
 
@@ -29,7 +29,7 @@ impl<'a> Parse<'a> for Tags<'a> {
         Ok(Self { list, span })
     }
 
-    fn error(error: retoken::Error<super::Alphabet>) -> Error {
-        Error::Token(error)
+    fn error(error: retoken::Error<super::Alphabet>) -> LexicalError {
+        LexicalError::Token(error)
     }
 }

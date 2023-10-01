@@ -1,7 +1,7 @@
 use retoken::Span;
 
 use super::{
-    error::{Error, ParseError},
+    error::{LexicalError, ParseError},
     parse::Parse,
     CloseAngle, Ident, OpenAngle, Slash,
 };
@@ -16,7 +16,7 @@ pub struct MarkupClose<'a> {
 }
 
 impl<'a> Parse<'a> for MarkupClose<'a> {
-    fn parse(tokenizer: &'a retoken::Tokenizer) -> Result<Self, Error> {
+    fn parse(tokenizer: &'a retoken::Tokenizer) -> Result<Self, LexicalError> {
         let start = tokenizer.cursor();
 
         let open_angle = tokenizer.token().map_err(Self::error)?;
@@ -37,8 +37,8 @@ impl<'a> Parse<'a> for MarkupClose<'a> {
         })
     }
 
-    fn error(error: retoken::Error<super::Alphabet>) -> Error {
-        Error::Parse(ParseError {
+    fn error(error: retoken::Error<super::Alphabet>) -> LexicalError {
+        LexicalError::Parse(ParseError {
             message: format!("Failed To Parse Closing Markup Tag: {error}").into_boxed_str(),
             span: error.span(),
         })

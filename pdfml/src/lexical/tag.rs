@@ -1,7 +1,7 @@
 use retoken::Span;
 
 use super::{
-    error::Error, expr::Expr, markup_tag::MarkupTag, parse::Parse, Alphabet, OpenAngle, Skip,
+    error::LexicalError, expr::Expr, markup_tag::MarkupTag, parse::Parse, Alphabet, OpenAngle, Skip,
 };
 
 #[derive(Debug, Clone)]
@@ -17,7 +17,7 @@ pub struct Tag<'a> {
 }
 
 impl<'a> Parse<'a> for Tag<'a> {
-    fn parse(tokenizer: &'a retoken::Tokenizer) -> Result<Self, Error> {
+    fn parse(tokenizer: &'a retoken::Tokenizer) -> Result<Self, LexicalError> {
         tokenizer.skip::<Skip>();
 
         let start = tokenizer.cursor();
@@ -34,7 +34,7 @@ impl<'a> Parse<'a> for Tag<'a> {
         Ok(Self { tag_type, span })
     }
 
-    fn error(error: retoken::Error<super::Alphabet>) -> Error {
-        Error::Token(error)
+    fn error(error: retoken::Error<super::Alphabet>) -> LexicalError {
+        LexicalError::Token(error)
     }
 }

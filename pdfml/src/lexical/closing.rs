@@ -1,7 +1,7 @@
 use retoken::Span;
 
 use super::{
-    error::{Error, ParseError},
+    error::{LexicalError, ParseError},
     parse::Parse,
     Alphabet, CloseAngle, Slash,
 };
@@ -19,7 +19,7 @@ pub struct Closing {
 }
 
 impl<'a> Parse<'a> for Closing {
-    fn parse(tokenizer: &'a retoken::Tokenizer) -> Result<Self, Error> {
+    fn parse(tokenizer: &'a retoken::Tokenizer) -> Result<Self, LexicalError> {
         let start = tokenizer.cursor();
         let closing_type = match tokenizer.peek::<'a, Alphabet, Slash>() {
             true => ClosingType::Slash(
@@ -35,10 +35,16 @@ impl<'a> Parse<'a> for Closing {
         Ok(Self { closing_type, span })
     }
 
-    fn error(error: retoken::Error<super::Alphabet>) -> Error {
-        Error::Parse(ParseError {
+    fn error(error: retoken::Error<super::Alphabet>) -> LexicalError {
+        LexicalError::Parse(ParseError {
             message: format!("Failed To Parse Closing Tag: {error}").into_boxed_str(),
             span: error.span(),
         })
+    }
+}
+
+impl Closing {
+    pub fn is_with_slash(&self) -> bool {
+        matches!(self.closing_type, ClosingType::Slash(_, _))
     }
 }

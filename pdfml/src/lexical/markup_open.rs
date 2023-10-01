@@ -3,7 +3,7 @@ use retoken::Span;
 use super::{
     attributes::Attributes,
     closing::Closing,
-    error::{Error, ParseError},
+    error::{LexicalError, ParseError},
     parse::Parse,
     Ident, OpenAngle,
 };
@@ -18,7 +18,7 @@ pub struct MarkupOpen<'a> {
 }
 
 impl<'a> Parse<'a> for MarkupOpen<'a> {
-    fn parse(tokenizer: &'a retoken::Tokenizer) -> Result<Self, Error> {
+    fn parse(tokenizer: &'a retoken::Tokenizer) -> Result<Self, LexicalError> {
         let start = tokenizer.cursor();
 
         let open_angle = tokenizer.token().map_err(Self::error)?;
@@ -39,8 +39,8 @@ impl<'a> Parse<'a> for MarkupOpen<'a> {
         })
     }
 
-    fn error(error: retoken::Error<super::Alphabet>) -> Error {
-        Error::Parse(ParseError {
+    fn error(error: retoken::Error<super::Alphabet>) -> LexicalError {
+        LexicalError::Parse(ParseError {
             message: format!("Failed To Parse Opening Markup Tag: {error}").into_boxed_str(),
             span: error.span(),
         })

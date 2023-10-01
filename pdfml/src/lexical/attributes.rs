@@ -1,4 +1,6 @@
-use retoken::Span;
+use std::fmt::Display;
+
+use retoken::{Span, Token};
 
 use super::{attr::Attr, parse::Parse, Alphabet, CloseAngle, Slash};
 
@@ -9,7 +11,7 @@ pub struct Attributes<'a> {
 }
 
 impl<'a> Parse<'a> for Attributes<'a> {
-    fn parse(tokenizer: &'a retoken::Tokenizer) -> Result<Self, super::error::Error> {
+    fn parse(tokenizer: &'a retoken::Tokenizer) -> Result<Self, super::error::LexicalError> {
         let start = tokenizer.cursor();
 
         let mut list = Vec::new();
@@ -27,7 +29,17 @@ impl<'a> Parse<'a> for Attributes<'a> {
         Ok(Self { list, span })
     }
 
-    fn error(error: retoken::Error<super::Alphabet>) -> super::error::Error {
-        super::error::Error::Token(error)
+    fn error(error: retoken::Error<super::Alphabet>) -> super::error::LexicalError {
+        super::error::LexicalError::Token(error)
+    }
+}
+
+impl<'a> Display for Attributes<'a> {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        for attr in self.list.iter() {
+            write!(f, "{} = {}", attr.ident.content(), attr.expr)?;
+        }
+
+        Ok(())
     }
 }
