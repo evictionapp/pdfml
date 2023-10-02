@@ -1,7 +1,8 @@
 use thiserror::Error;
 
 use crate::{
-    lexical::error::LexicalError, resolved::error::ResolvedError, syntax::error::SyntaxError,
+    lexical::error::LexicalError, relative::error::RelativeError, resolved::error::ResolvedError,
+    syntax::error::SyntaxError,
 };
 
 #[derive(Debug, Error)]
@@ -12,4 +13,6 @@ pub enum RenderError {
     Lexical(#[from] LexicalError),
     #[error("{0}")]
     Resolved(#[from] ResolvedError),
+    #[error("{0}")]
+    Relative(#[from] RelativeError),
 }

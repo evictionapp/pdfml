@@ -4,6 +4,7 @@ use retoken::Tokenizer;
 
 use crate::{
     lexical::{parse::Parse, tags::Tags},
+    relative::relative_tree::RelativeTree,
     render::error::RenderError,
     resolved::resolved_tree::ResolvedTree,
     syntax::syntax_tree::SyntaxTree,
@@ -16,11 +17,13 @@ pub fn render(src: &str, ident_map: HashMap<Box<str>, Box<str>>) -> Result<(), R
 
     let tags = Tags::parse(&tokenizer)?;
 
-    let tree = SyntaxTree::new(tags)?;
+    let syntax_tree = SyntaxTree::new(tags)?;
 
-    let resolved = ResolvedTree::new(tree, ident_map)?;
+    let resolved_tree = ResolvedTree::new(syntax_tree, ident_map)?;
 
-    println!("{:?}", resolved);
+    let relative_tree = RelativeTree::new(resolved_tree)?;
+
+    println!("{:?}", relative_tree);
 
     Ok(())
 }

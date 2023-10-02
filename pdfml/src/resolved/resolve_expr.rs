@@ -1,4 +1,4 @@
-use std::{collections::HashMap, rc::Rc};
+use std::collections::HashMap;
 
 use retoken::Token;
 
@@ -25,7 +25,7 @@ pub fn resolve_expr<'a>(
                 }
             };
 
-            Expr::Resolved(value.clone())
+            Expr::Resolved(value)
         }
     };
 
